@@ -1,0 +1,108 @@
+---
+title: "Testing GAN for our data"
+output: NULL
+---
+
+
+# Creat the environment on crane for the GAN
+
+```{bash}
+# training:me
+conda env create -f evolution_env.yml 
+conda activate me
+```
+
+#
+# To activate this environment, use
+#
+#     $ conda activate tf-env
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
+
+```{bash}
+srun --partition=gpu --gres=gpu --mem=4gb --ntasks-per-node=2 --nodes=1 --pty $SHELL
+```
+
+# Scripts
+
+The script 'train_gan.py' to train a generative model of regulatory DNA can be run via:
+
+```{bash}
+python train_gan.py --generic True
+
+python train_gan.py --data_loc "SeqsData" --log_name "gan_bal_200d" --train_iters 300000 --max_seq_len 1000 --latent_dim 200 --balanced_bins --seed 111
+```
+
+where the folder SeqsData contains the training, validation and test sequence datasets in plain .txt files (e.g. train_data.txt, test_data.txt, valid_data.txt). Please see the script for further details on possible parameters.
+
+The script 'optimize_gan.py' to optimize a trained generator with a predictive model to obtain an ExpressionGAN  can be run via:
+
+```python optimize_gan.py --log_name "gan_bal_200d_opt" --generator "gen_path/trained_gan.ckpt.meta" --predictor "pred_path" --iterations 100000 --target 'max' --seed 222```
+
+Please see the script for further details on possible parameters.
+
+
+usage: train_gan.py [-h] [--generic] [--data_loc DATA_LOC]
+                    [--data_start DATA_START] [--log_dir LOG_DIR]
+                    [--log_name LOG_NAME] [--checkpoint CHECKPOINT]
+                    [--model_type MODEL_TYPE] [--train_iters TRAIN_ITERS]
+                    [--disc_iters DISC_ITERS]
+                    [--checkpoint_iters CHECKPOINT_ITERS]
+                    [--latent_dim LATENT_DIM] [--gen_dim GEN_DIM]
+                    [--disc_dim DISC_DIM] [--gen_layers GEN_LAYERS]
+                    [--disc_layers DISC_LAYERS] [--batch_size BATCH_SIZE]
+                    [--max_seq_len MAX_SEQ_LEN] [--vocab VOCAB]
+                    [--vocab_order VOCAB_ORDER] [--annotate] [--validate]
+                    [--balanced_bins] [--learning_rate LEARNING_RATE]
+                    [--lmbda LMBDA] [--seed SEED]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --generic             Generate generic data on the fly (ignores data_loc and
+                        data_start args)
+  --data_loc DATA_LOC   Data location
+  --data_start DATA_START
+                        Line number to start when parsing data (useful for
+                        ignoring header)
+  --log_dir LOG_DIR     Base log folder
+  --log_name LOG_NAME   Name to use when logging this model
+  --checkpoint CHECKPOINT
+                        Filename of checkpoint to load
+  --model_type MODEL_TYPE
+                        Which type of model architecture to use (resnet or
+                        mlp)
+  --train_iters TRAIN_ITERS
+                        Number of iterations to train GAN for
+  --disc_iters DISC_ITERS
+                        Number of iterations to train discriminator for at
+                        each training step
+  --checkpoint_iters CHECKPOINT_ITERS
+                        Number of iterations before saving checkpoint
+  --latent_dim LATENT_DIM
+                        Size of latent space
+  --gen_dim GEN_DIM     Generator dimension parameter
+  --disc_dim DISC_DIM   Discriminator dimension parameter
+  --gen_layers GEN_LAYERS
+                        How many layers for generator
+  --disc_layers DISC_LAYERS
+                        How many layers for discriminator
+  --batch_size BATCH_SIZE
+                        Batch size
+  --max_seq_len MAX_SEQ_LEN
+                        Maximum sequence length of data
+  --vocab VOCAB         Which vocabulary to use. Options are 'dna', 'rna',
+                        'dna_nt_only', and 'rna_nt_only'.
+  --vocab_order VOCAB_ORDER
+                        Specific order for the one-hot encodings of vocab
+                        characters
+  --annotate            Include annotation as part of training/generation
+                        process?
+  --validate            Whether to use validation set
+  --balanced_bins       Whether to use balanched bins batches
+  --learning_rate LEARNING_RATE
+                        Learning rate for the optimizer
+  --lmbda LMBDA         Lipschitz penalty hyperparameter
+  --seed SEED           Random seed
+
