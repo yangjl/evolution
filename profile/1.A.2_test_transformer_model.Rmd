@@ -1,0 +1,27 @@
+---
+title: "Testing GAN for our data"
+output: NULL
+---
+
+# TPU model is the transformer model
+
+`manuscript_code/model/tpu_model`
+
+
+This directory contains the files needed to train and evaluate the transformer(TPU) model. The notebook explains the corresponding code in detail.
+
+Processing the data:
+ `data_processing.py`.
+Training the transformer(TPU) model:
+`train_model.py`.
+Using the saved transformer(TPU) model to make predictions and reproduce results:
+`1_use_tpu_model_to_generate_results.ipynb (complex media)`
+`1_use_tpu_model_to_generate_results_defined.ipynb (defined media)`
+
+```{bash}
+# training:me
+conda env create -f evolution_env.yml 
+conda activate me
+conda list # list the software
+```
+

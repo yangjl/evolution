@@ -10,6 +10,7 @@ output: NULL
 # training:me
 conda env create -f evolution_env.yml 
 conda activate me
+conda list # list the software
 ```
 
 #
@@ -21,7 +22,33 @@ conda activate me
 #
 #     $ conda deactivate
 
+# Utilizing Anaconda Environments in JupyterHub
+
+https://newsroom.unl.edu/announce/holland/7344/41179
+
+4. Install the ipykernal package into the active environment with the command `conda install ipykernel`.
+5. Install the kernel specification with the command 'python -m ipykernel install --user --name me --display-name "Python (me)"'
+6. Add any other desired packages and deactivate the environment with `conda deactivate`.
+
+The previous steps will be sufficient to make the conda environment available to local Jupyter Notebooks.
+
+To make your conda environments accessible from SLURM Notebooks, enter the following commands:
+mkdir -p $WORK/.jupyter
+mv ~/.local/share/jupyter/kernels $WORK/.jupyter
+ln -s $WORK/.jupyter/kernels ~/.local/share/jupyter/kernels
+
+Note: This last step only needs to be done once. Any future created environments will automatically be accessible from SLURM notebooks once this is done.
+
+To check that your environment has been created correctly, login to JupyterHub and select a Jupyter Notebook job profile. Create a new notebook using the environment by selecting the correct entry in the `New` drop-down menu in the top right corner.
+
+
 ```{bash}
+
+```
+
+
+```{bash}
+# /work/jyanglab/jyang21/projects/evolution/manuscript_code
 srun --partition=gpu --gres=gpu --mem=4gb --ntasks-per-node=2 --nodes=1 --pty $SHELL
 ```
 
